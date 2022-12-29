@@ -4,6 +4,7 @@ export function background(userDomain) {
   const cxBackground = canvasBackground.getContext("2d");
   cxBackground.fillStyle = "#1c2125";
   cxBackground.fillRect(0, 0, 600, 500);
+  //Dummy change
   cxBackground.font = "25px Arial";
   cxBackground.fillStyle = "#DD7F44";
   cxBackground.fillText(userDomain + process.env.REACT_APP_TLD, 40, 350);
