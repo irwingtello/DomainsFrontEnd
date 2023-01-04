@@ -53,8 +53,8 @@ const WalletCard = ({ value }) => {
         image: new File(
           [blob],
           userDomin +
-            process.env.REACT_APP_TLD.toString().replace(".", "") +
-            ".jpg",
+          process.env.REACT_APP_TLD.toString().replace(".", "") +
+          ".jpg",
           {
             type: "image/jpg",
           }
@@ -88,12 +88,12 @@ const WalletCard = ({ value }) => {
     error: prepareError,
     isPrepareError: isPrepareError,
   } = usePrepareContractWrite({
-    address: "0xF9FB1B27314Fa5bA136C765bE2439C9513aEf13C",
+    address: process.env.REACT_APP_MAINNET_ADDRESS,
     abi: ABI,
     functionName: "register",
     enabled: theFlag,
     args: [userDomin.replace(".baro", ""), metadataX],
-    chainId: polygonTestnet.id,
+    chainId: polygonMainnet.id,
     onSuccess(data) {
       console.log("Success", data);
     },
@@ -153,15 +153,20 @@ const WalletCard = ({ value }) => {
         });
 
       if (userDomin.length === 0) {
-        alert("Caja de texto vacia");
+        alert("El nombre del dominio no puede quedar vacío.");
       } else {
         if (!strongRegex.test(userDomin)) {
-          alert("Caracter invalido");
+          alert("El nombre del dominio contiene caracteres no válidos. Utilice sólo Letras y Números.");
         } else {
           if (userDomin.length <= 20) {
-            setEnableProcess(0);
-            mint();
-          } else {
+            if ((/[a-zA-Z]/g).test(userDomin)) {
+              setEnableProcess(0);
+              mint();
+            }
+            else
+              alert("El nombre del dominio debe contener al menos una letra.");
+          }
+          else {
             alert("No puede ser mas de 20 caracteres");
           }
         }
@@ -262,7 +267,11 @@ const WalletCard = ({ value }) => {
               <div>
                 ¡Has obtenido con éxito tu NFT!
                 <div>
-                  <a href={`${data?.hash}`}>Hash</a>
+                 {
+
+                  data?.hash &&(
+                  <React.Fragment> <br></br><a target="_blank" href={`${polygonMainnet.blockExplorers.default.url}/tx/${data?.hash}`}>Hash</a></React.Fragment>)
+                  }
                 </div>
               </div>
             )}
