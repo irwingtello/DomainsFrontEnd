@@ -9,7 +9,6 @@ import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import FormHelperText from "@mui/material/FormHelperText";
-
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { ethers, getDefaultAccount } from "ethers";
 import "./WalletCard.css";
@@ -17,6 +16,7 @@ import { NFTStorage } from "nft.storage/dist/bundle.esm.min.js";
 import QRCode from "qrcode";
 import { background } from "./methods/functions.js";
 import ABI from "./methods/ABI.json";
+
 import {
   useAccount,
   usePrepareContractWrite,
@@ -27,7 +27,9 @@ import {
   ChainDoesNotSupportMulticallError,
 } from "wagmi";
 import { polygonMainnet, polygonTestnet } from "./methods/Chains.jsx";
-var connected = false;
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
+import "firebase/compat/auth";
 
 const WalletCard = ({ value }) => {
   const client = new NFTStorage({
@@ -43,6 +45,7 @@ const WalletCard = ({ value }) => {
   const [userDomin, setUserDomin] = useState("");
   const [enableProcess, setEnableProcess] = useState(0);
   const { address, isConnected } = useAccount();
+  
   async function mint() {
     let imageDentro;
     let canvasBackground = background(userDomin);
@@ -53,12 +56,11 @@ const WalletCard = ({ value }) => {
         image: new File(
           [blob],
           userDomin +
-          process.env.REACT_APP_TLD.toString().replace(".", "") +
-          ".jpg",
+            process.env.REACT_APP_TLD.toString().replace(".", "") +
+            ".jpg",
           {
             type: "image/jpg",
-          }
-        ),
+          }),
       });
       setMetaDatax(metadata.url);
       await fetch(
@@ -70,20 +72,21 @@ const WalletCard = ({ value }) => {
             "ipfs://",
             "https://nftstorage.link/ipfs/"
           );
-        })
-        .catch((err) => console.error(err));
+        }).catch((err) => console.error(err));
       setImagex(imageDentro);
       setVisibleItem(true);
       setEnableProcess(2);
     });
-  }
+  }  
+
+
   const theFlag = useMemo(() => {
     return userDomin !== "" && metadataX !== "";
   }, [userDomin, metadataX]);
 
   const {
-    config,
-    data: datax,
+    config:config,
+    data: dataDomains,
     isSuccess: isSuccessPrepare,
     error: prepareError,
     isPrepareError: isPrepareError,
@@ -111,15 +114,17 @@ const WalletCard = ({ value }) => {
     hash: data?.hash,
   });
 
-  const [isInitialRender, setIsInitialRender] = useState(true);
 
+ 
   useEffect(() => {
     if (enableProcess == 2) {
-      console.log("--");
       write?.();
     }
   }, [enableProcess]);
+
   const canvasRef = useRef(null);
+
+
 
   useEffect(() => {
     async function fetchDefaultAccount() {
@@ -156,17 +161,17 @@ const WalletCard = ({ value }) => {
         alert("El nombre del dominio no puede quedar vacío.");
       } else {
         if (!strongRegex.test(userDomin)) {
-          alert("El nombre del dominio contiene caracteres no válidos. Utilice sólo Letras y Números.");
+          alert(
+            "El nombre del dominio contiene caracteres no válidos. Utilice sólo Letras y Números."
+          );
         } else {
           if (userDomin.length <= 20) {
-            if ((/[a-zA-Z]/g).test(userDomin)) {
+            if (/[a-zA-Z]/g.test(userDomin)) {
               setEnableProcess(0);
               mint();
-            }
-            else
+            } else
               alert("El nombre del dominio debe contener al menos una letra.");
-          }
-          else {
+          } else {
             alert("No puede ser mas de 20 caracteres");
           }
         }
@@ -267,55 +272,24 @@ const WalletCard = ({ value }) => {
               <div>
                 ¡Has obtenido con éxito tu NFT!
                 <div>
-                 {
-
-                  data?.hash &&(
-                  <React.Fragment> <br></br><a target="_blank" href={`${polygonMainnet.blockExplorers.default.url}/tx/${data?.hash}`}>Hash</a></React.Fragment>)
-                  }
+                  {data?.hash && (
+                    <React.Fragment>
+                      {" "}
+                      <br></br>
+                      <a
+                        target="_blank"
+                        href={`${polygonMainnet.blockExplorers.default.url}/tx/${data?.hash}`}
+                      >
+                        Comprobante de transacción
+                      </a>
+                    </React.Fragment>
+                  )}
                 </div>
               </div>
             )}
             {(isPrepareError || isError) && (
               <div>Error: {(prepareError || error)?.message}</div>
             )}
-            {cards.map((card) => (
-              <Grid item key={card} xs={15} sm={10} md={8}>
-                <CardMedia>
-                  {visibleItem ? (
-                    <>
-                      <img
-                      alt="card media"
-                        src={imagex}
-                        style={{
-                          width: "228px",
-                          height: "228px",
-                          margin: "5 auto",
-                        }}
-                      ></img>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </CardMedia>
-                <CardContent sx={{ flexGrow: 1 }}></CardContent>
-              </Grid>
-            ))}
-            <div className="cards">
-              <div className="card">
-                <h1>Recarga $20</h1>
-                <img src="https://media.discordapp.net/attachments/1010616157696430123/1060053189711376515/RecargaAmigoTelcel.jpg" alt="image description" />
-                <input type="tel" placeholder="Numero de telefono" />
-                <button>Transferir 20 $BARO a 0xADe4BEa7db7e35a5bE2CC9c528169Cb6cF2f4b6E</button>
-              </div>
-              
-              <div className="card">
-                <h1>Recarga $100</h1>
-                <img src="https://media.discordapp.net/attachments/1010616157696430123/1060053189711376515/RecargaAmigoTelcel.jpg" alt="image description" />
-                
-                <input name="telefono" type="tel" placeholder="Numero de telefono" />
-                <button>Transferir 100 $BARO a 0xADe4BEa7db7e35a5bE2CC9c528169Cb6cF2f4b6E</button>
-              </div>
-            </div>
           </Container>
         </React.Fragment>
       </div>
