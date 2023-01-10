@@ -20,7 +20,6 @@ import { polygon } from "wagmi/chains";
 import { WagmiConfig } from "wagmi";
 import { polygonMainnet, polygonTestnet } from "./methods/Chains.jsx";
 import firebase from "firebase/compat/app";
-import Footer from "./Footer";
 const { chains, provider } = configureChains(
   [polygonMainnet],
   [
@@ -55,7 +54,6 @@ export function App() {
     <center>
       <WagmiConfig client={client}>
         <Profile />
-        <Footer />
         {isConnected == true ? <></> : <></>}
       </WagmiConfig>
     </center>

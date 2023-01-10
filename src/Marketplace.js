@@ -46,7 +46,6 @@ const Marketplace = ({ value }) => {
       image:"https://www.telcel.com/content/dam/htmls/img/icons/logo-telcel.svg"
      }, 
     { value: "",price:"100000000000000000000",text:"Recarga de $100 pesos",image:"https://www.telcel.com/content/dam/htmls/img/icons/logo-telcel.svg"  },
-    { value: "",price:"200000000000000000000",text:"Recarga de $200 pesos",image:"https://www.telcel.com/content/dam/htmls/img/icons/logo-telcel.svg"  },
   ]);
 
   const handleChange = (e, index) => {
@@ -163,8 +162,6 @@ const Marketplace = ({ value }) => {
                                     id="phone" 
                                     size="13"
                                     pattern="[0-9]{1,10}"
-                                    maxlength="10" 
-                                    minlength="10"
                                     value={textBox.value}
                                     placeholder="Teléfono" onChange={e => handleChange(e, index)}
                                     aria-describedby="outlined-weight-helper-text"

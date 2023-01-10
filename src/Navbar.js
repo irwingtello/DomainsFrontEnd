@@ -26,7 +26,7 @@ const Navbar = (props) => {
   const theme = createTheme({
     palette: {
       primary: {
-        main: "#004AAD",
+        main: "#DD7F44",
       },
       secondary: {
         main: "#f44336",
@@ -39,8 +39,47 @@ const Navbar = (props) => {
         <AppBar>
           <Toolbar>
             <Typography variant="h6" color="inherit" noWrap>
-              Baro Score
+              Baro Capital
             </Typography>
+
+            {props.isConnected ? (
+              <React.Fragment>
+                <div className="divButton2">
+                  <Button variant="contained" disabled size="small">
+                    {address.substring(0, 10)}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    size="small"
+                    onClick={disconnect}
+                  >
+                    Desconectar
+                  </Button>
+                </div>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                {connectors.map((connector) => (
+                  <div className="divButton2">
+                    <Button
+                      variant="contained"
+                      color="success"
+                      disabled={!connector.ready}
+                      key={connector.id}
+                      onClick={() => connect({ connector })}
+                    >
+                      {connector.name}
+                      {!connector.ready && " (unsupported)"}
+                      {isLoading &&
+                        connector.id === pendingConnector?.id &&
+                        " (connecting)"}
+                    </Button>
+                  </div>
+                ))}
+              </React.Fragment>
+            )}
+            {error && <div>{error.message}</div>}
           </Toolbar>
         </AppBar>
       </ThemeProvider>

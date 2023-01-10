@@ -1,13 +1,15 @@
 import React from "react";
-import { useAccount } from "wagmi";
-import "./Risk.css";
-import "./Profile.css";
+import {
+  useAccount,
+  useConnect,
+  useDisconnect,
+  usePrepareContractWrite,
+} from "wagmi";
 import Navbar from "./Navbar";
-
-import RiskProfile from "./RiskProfile";
+import WalletCard from "./WalletCard";
+import Marketplace from "./Marketplace";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-
 import FormControl from "@mui/material/FormControl";
 import BaroImage from "./assets/BaroLogo.png";
 
@@ -34,37 +36,36 @@ export function Profile() {
               alignItems: "center",
             }}
           >
-            <React.Fragment>
-              <Box
-                sx={{
-                  my: 4,
-                  mx: 12,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <FormControl sx={{ m: -4 }}>
-                  <img className="img" src={BaroImage} />
-                </FormControl>
-                <FormControl sx={{ m: 4 }}>
-                  <h1 className="h1">Generate your risk profile</h1>
-                </FormControl>
-                <FormControl sx={{ m: 0 }}>
-                  <h1 className="h1">
-                    Get your wallet Baro Score delivered to you.
-                  </h1>
-                  <br></br>
-                  <h1 className="h1">
-                    Just add the assets you own, the number of tokens and
-                    receive your personalized score.
-                  </h1>
-                </FormControl>
-                <FormControl sx={{ m: 8 }}>
-                  <RiskProfile />
-                </FormControl>
-              </Box>
-            </React.Fragment>
+            {isConnected ? (
+              <React.Fragment>
+                <center>
+                  <WalletCard />
+                  <Marketplace/>
+                </center>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <Box
+                  sx={{
+                    my: 4,
+                    mx: 12,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
+                  <FormControl sx={{ m: -10 }}>
+                    <img src={BaroImage} />
+                  </FormControl>
+                  <FormControl sx={{ m: -8 }}>
+                    <h1>
+                      Sabemos que el efectivo es el rey, nosotros solo lo
+                      transformamos
+                    </h1>
+                  </FormControl>
+                </Box>
+              </React.Fragment>
+            )}
           </Box>
         </Grid>
       </Box>
